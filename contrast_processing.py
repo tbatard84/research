@@ -58,15 +58,20 @@ if __name__ == '__main__':
 
 
 		v0 = rgb2lab(u0/255.)
+		print(np.median(v0[:,:,0]))
 		v = np.empty(u0.shape)
 
 		if method == 'channelwise':
 
-			v[:,:,0] = np.real(ifft2(fft2(v0[:,:,0])/den))
-			v[:,:,1] = np.real(ifft2(fft2(v0[:,:,1])/den))
-			v[:,:,2] = np.real(ifft2(fft2(v0[:,:,2])/den))
+			for i in range(u0.shape[2]):
+				v[:,:,i] = np.real(ifft2(fft2(v0[:,:,i])/den))
 
-		elif method == 'chrominance':
+		elif method == 'chrominancepreserving':
+			
+			v = v0
+			v[:,:,0] = np.real(ifft2(fft2(v0[:,:,0])/den))
+	
+		elif method == 'lightnesspreserving':
 
 			v[:,:,0] = v0[:,:,0]
 			v[:,:,1] = np.real(ifft2(fft2(v0[:,:,1])/den))
@@ -86,9 +91,12 @@ if __name__ == '__main__':
 			v[:,:,1]  = r * np.sin(theta0) * np.sin(phi0)
 			v[:,:,2]  = r * np.cos(theta0)	
 
+		else: raise NotImplementedError(f'Invalid contrast processing method')	
+
+		print(np.median(v[:,:,0]))	
 		u = 255*lab2rgb(v)
 
 		u = np.clip(u, 0, 255)
 		u = u.astype('uint8')
 		img = Image.fromarray(u, 'RGB')
-		img.save(f'res_{method}.png')	
+		img.save(f'res_{method}_method.png')	
