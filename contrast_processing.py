@@ -17,7 +17,7 @@ if __name__ == '__main__':
 		required=True)
 		parser.add_argument(
 		'--method',
-		help='contrast processing method [channelwise, chrominance, huepreserving]',
+		help='contrast processing method [channelwise, chrominance, moving frame]',
 		default='channelwise',
 		action='store',
 		dest='method',
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 			v[:,:,1] = np.real(ifft2(fft2(v0[:,:,1])/den))
 			v[:,:,2] = np.real(ifft2(fft2(v0[:,:,2])/den))	
 
-		elif method == 'huepreserving':
+		elif method == 'movingframe':
 		
 			# from cartesian to spherical coordinates
 			r0 = np.sqrt(np.square(v0[:,:,0]) + np.square(v0[:,:,1]) + np.square(v0[:,:,2]))
